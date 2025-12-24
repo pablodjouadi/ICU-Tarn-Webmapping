@@ -371,9 +371,9 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <!-- Fichiers de données - À placer dans le même dossier -->
-    <script src="icu_communes_0.js"></script>
-    <script src="icu_pop_insee_stat_014.js"></script>
-    <script src="vue_temperature_moyenne_communes_0.js"></script>
+    <script src="Webmapping/data/icu_communes_0.js"></script>
+    <script src="Webmapping/data/icu_pop_insee_stat_014.js"></script>
+    <script src="Webmapping/data/vue_temperature_moyenne_communes_0.js"></script>
     
     <script>
         // ==================== CARTE 1 : ZONE D'ÉTUDE ====================
@@ -948,7 +948,7 @@
 
         // Ajouter l'image ICU d'Albi
         var imgBoundsAlbi = [[43.88750753812116, 2.0514430447938317], [43.97003580872248, 2.212183731936459]];
-        var imageOverlayAlbi = L.imageOverlay('ICU_30m_0.png', imgBoundsAlbi, {
+        var imageOverlayAlbi = L.imageOverlay('Webmapping/data/ICU_30m_0.png', imgBoundsAlbi, {
             opacity: 1
         }).addTo(mapAlbi);
 
