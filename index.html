@@ -398,7 +398,7 @@
                     Pour mieux comprendre les effets des îlots de chaleur urbains à l'échelle locale, un focus 
                     détaillé est réalisé sur trois communes représentatives du département du Tarn. Ces analyses 
                     à haute résolution permettent d'identifier précisément les zones les plus chaudes au sein 
-                    des tissus urbains et d'orienter les stratégies d'adaptation climatique à l'échelle communale.
+                    des tissus urbains et d'orienter les stratégies d'adaptation climatique à l'échelle communale. Les cas d'études s'appuient sur 3 profils types, une zone urbaine, périurbaine et une ville avec une forte végétation
                 </p>
             </div>
 
@@ -510,8 +510,7 @@
                     La vulnérabilité des populations face aux îlots de chaleur urbains résulte du croisement 
                     entre l'intensité des phénomènes thermiques et la sensibilité des populations exposées. 
                     Cette analyse combine les données d'îlots de chaleur avec les indicateurs démographiques 
-                    de vulnérabilité (populations jeunes et âgées) pour identifier les zones prioritaires 
-                    d'intervention.
+                    de vulnérabilité (populations jeunes et âgées) pour identifier les zones impactées par le réchauffent urbain
                 </p>
                 <p>
                     Les cartographies présentées révèlent les secteurs où se concentrent à la fois des 
@@ -534,7 +533,7 @@
                     sur le département du Tarn. Utilisez le contrôle des couches en haut à droite pour afficher 
                     ou masquer les différentes informations : limites communales, îlots de chaleur, populations 
                     vulnérables, températures moyennes et zones de risque. La superposition de ces données permet 
-                    une analyse territoriale complète et facilite l'identification des secteurs prioritaires.
+                    une analyse territoriale complète et facilite l'identification des secteurs sensibles.
                 </p>
             </div>
 
@@ -547,8 +546,8 @@
         <!-- Pied de page -->
         <footer>
             <p>&copy; 2024 - Étude des Îlots de Chaleur Urbains dans le Tarn | Données OpenStreetMap, Esri & INSEE</p>
-            <p>Achour Maria, Delaperche Lucie, Djouadi Pablo, Nougier Jeremie</p>
-            <p>Le commanditaire et encadrant du présent travail est Hanan JEMMAL</p>
+            <p>Commanditaire BAWSALA (EI Hanan JEMMAL). Dans le cadre du développement de ses services.</p>
+            <p>Réalisation : Achour Maria, Delaperche Lucie, Djouadi Pablo, Nougier Jeremie</p>
         </footer>
     </div>
 
@@ -583,8 +582,9 @@
                 style: {
                     color: '#2c3e50',
                     weight: 2,
-                    fillColor: 'rgba(141,90,153,0.1)',
-                    fillOpacity: 0.3
+                    fillColor: '#808080', // ✓ Gris en format hexadécimal
+                    fillOpacity: 0.25,
+                    fill: true
                 },
                 onEachFeature: function(feature, layer) {
                     if (feature.properties['nom']) {
@@ -1555,8 +1555,9 @@
                 style: {
                     color: '#2c3e50',
                     weight: 2,
-                    fillColor: 'rgba(141,90,153,0.1)',
-                    fillOpacity: 0.3
+                    fillColor: '#808080', // ✓ Gris en format hexadécimal
+                    fillOpacity: 0.25,
+                    fill: true
                 },
                 onEachFeature: function(feature, layer) {
                     if (feature.properties['nom']) {
@@ -1569,7 +1570,9 @@
                     }
                 }
             });
-            console.log("✓ Couche communes créée (prête pour le contrôle)");
+            // AJOUTER LA COUCHE À LA CARTE PAR DÉFAUT
+            communesLayerInteractive.addTo(mapInteractive);
+            console.log("✓ Couche communes créée et ajoutée à la carte");
         } else {
             console.log("✗ Données communes non disponibles");
         }
@@ -1907,6 +1910,11 @@
 
         console.log("Contrôle des couches créé avec", Object.keys(overlayMaps).length, "couches");
 
+        // Ajuster la vue pour voir toutes les communes
+        if (communesLayerInteractive) {
+            mapInteractive.fitBounds(communesLayerInteractive.getBounds());
+        }
+
         // ===== LÉGENDE DYNAMIQUE =====
         const legendInteractive = L.control({ position: 'bottomleft' });
 
@@ -1933,6 +1941,15 @@
             
             let html = '<h4 style="margin:0 0 10px 0; font-size:1em; font-weight:600; color:#2c3e50; border-bottom:2px solid #2c3e50; padding-bottom:8px;">Légende</h4>';
             let hasLayers = false;
+            
+            // Limites communales (toujours visible si activée)
+            if (communesLayerInteractive && mapInteractive.hasLayer(communesLayerInteractive)) {
+                hasLayers = true;
+                html += '<div style="margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #ddd;">';
+                html += '<strong style="color:#2c3e50; display:block; margin-bottom:5px; font-size:0.9em;">Limites communales</strong>';
+                html += '<div style="width:25px; height:15px; background:rgba(128,128,128,0.25); margin-right:8px; border:2px solid #2c3e50;"></div><span style="font-size:0.8em;">Fond gris 25%</span></div>';
+                html += '</div>';
+            }
             
             // Température
             if (tempCommuneLayerInteractive && mapInteractive.hasLayer(tempCommuneLayerInteractive)) {
