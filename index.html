@@ -580,9 +580,9 @@
         if (typeof json_icu_communes_0 !== 'undefined') {
             const communesLayer = L.geoJson(json_icu_communes_0, {
                 style: {
-                    color: '#2c3e50',
-                    weight: 2,
-                    fillColor: '#808080', // ✓ Gris en format hexadécimal
+                    color: '#2c3e50',  
+                    weight: 0.5,
+                    fillColor: '#f4e4c1', 
                     fillOpacity: 0.25,
                     fill: true
                 },
@@ -1553,9 +1553,9 @@
             console.log("✓ Données communes disponibles");
             communesLayerInteractive = L.geoJson(json_icu_communes_0, {
                 style: {
-                    color: '#2c3e50',
-                    weight: 2,
-                    fillColor: '#808080', // ✓ Gris en format hexadécimal
+                    color: '#ffffff',
+                    weight: 0.5,
+                    fillColor: '#f4e4c1',
                     fillOpacity: 0.25,
                     fill: true
                 },
@@ -1947,7 +1947,7 @@
                 hasLayers = true;
                 html += '<div style="margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #ddd;">';
                 html += '<strong style="color:#2c3e50; display:block; margin-bottom:5px; font-size:0.9em;">Limites communales</strong>';
-                html += '<div style="width:25px; height:15px; background:rgba(128,128,128,0.25); margin-right:8px; border:2px solid #2c3e50;"></div><span style="font-size:0.8em;">Fond gris 25%</span></div>';
+                html += '<div style="width:25px; height:15px; background:rgba(244,228,193,0.25); margin-right:8px; border:1px solid #ffffff;"></div><span style="font-size:0.8em;">Fond gris 25%</span></div>';
                 html += '</div>';
             }
             
