@@ -308,20 +308,41 @@
                         des contreforts du Massif Central au nord aux plaines du Lauragais au sud.
                     </p>
                     <p>
-                        L'analyse porte sur l'ensemble des communes du département, avec une attention particulière 
-                        portée aux zones urbaines d'Albi (préfecture, 51 000 habitants), Castres (sous-préfecture, 
-                        42 000 habitants) et Puylaurens (3 200 habitants). Les deux premières agglomérations, Albi et Castres, se distinguent par un fort niveau d'urbanisation propice au développement d'îlots de chaleur, tandis que Puylaurens a été choisie comme point de comparaison en raison de son caractère plus rural.
+                        L'analyse porte sur l'ensemble des communes du département, avec une attention 
+                        particulière portée aux zones urbaines d'Albi (préfecture, 51 000 habitants), Castres 
+                        (sous-préfecture, 42 000 habitants) et Puylaurens (3 200 habitants). Les deux 
+                        premières agglomérations, Albi et Castres, se distinguent par un fort niveau 
+                        d'urbanisation propice au développement d'îlots de chaleur, tandis que Puylaurens a 
+                        été choisie comme point de comparaison en raison de son caractère plus rural.
                     </p>
                     <p>
-                        Le climat tarnais, de type océanique dégradé avec des influences méditerranéennes au sud, 
-                        connaît des étés de plus en plus chauds avec des épisodes caniculaires récurrents. Cette 
-                        évolution climatique accentue l'importance de l'étude des ICU pour l'adaptation territoriale 
-                        et la qualité de vie des habitants.
+                        Le climat tarnais, de type océanique dégradé avec des influences méditerranéennes au 
+                        sud, connaît des étés de plus en plus chauds avec des épisodes caniculaires récurrents. 
+                        Cette évolution climatique accentue l'importance de l'étude des ICU pour l'adaptation 
+                        territoriale et la qualité de vie des habitants.
                     </p>
                 </div>
 
                 <!-- Carte zone d'étude -->
                 <div class="map-block" id="map-zone-etude"></div>
+            </div>
+            
+            <!-- TEXTE AJOUTÉ EN DESSOUS DE LA CARTE -->
+            <div class="zone-etude-content" style="grid-template-columns: 1fr; margin-top: 40px;">
+                <div class="text-block">
+                    <p>
+                        Le changement climatique aggrave les vagues de chaleur en ville, amplifiées par les 
+                        îlots de chaleur urbains, exposant ainsi les populations à des défis majeurs : stress 
+                        thermique accru, inégalités d'exposition entre quartiers, et pression sur les 
+                        infrastructures (énergie, santé).
+                    </p>
+                    <p>
+                        Pour agir efficacement, les SIG et le webmapping permettent de cartographier les 
+                        vulnérabilités, de simuler des scénarios d'adaptation (comme la création d'oasis 
+                        urbains ou l'utilisation de revêtements réfléchissants), et de faciliter la prise de 
+                        décision grâce à des outils visuels et collaboratifs.
+                    </p>
+                </div>
             </div>
         </section>
 
@@ -545,8 +566,8 @@
 
         <!-- Pied de page -->
         <footer>
-            <p>&copy; 2024 - Étude des Îlots de Chaleur Urbains dans le Tarn | Données OpenStreetMap, Esri & INSEE</p>
-            <p>Commanditaire BAWSALA (EI Hanan JEMMAL). Dans le cadre du développement de ses services.</p>
+            <p>&copy; 2026 - Étude des Îlots de Chaleur Urbains dans le Tarn | Données OpenStreetMap, Esri & INSEE</p>
+            <p>Commanditaire : BAWSALA (EI Hanan JEMMAL). Dans le cadre du développement de ses services.</p>
             <p>Réalisation : Achour Maria, Delaperche Lucie, Djouadi Pablo, Nougier Jeremie</p>
         </footer>
     </div>
@@ -1861,8 +1882,8 @@
         console.log("Création du contrôle des couches...");
 
         const baseMaps = {
-            "Satellite": fondCarteSatellite,
-            "Classique": fondCarteClassique
+            "ESRI Satellite": fondCarteSatellite,
+            "OpenStreetMap": fondCarteClassique
         };
 
         const overlayMaps = {};
