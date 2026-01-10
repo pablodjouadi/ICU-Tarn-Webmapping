@@ -7,273 +7,471 @@
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@2.4.0/Control.FullScreen.css" />
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+         * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Georgia', 'Times New Roman', serif;
-            background: #f5f5f5;
-            color: #333;
-        }
+    body {
+        font-family: 'Georgia', 'Times New Roman', serif;
+        background: #f5f5f5;
+        color: #333;
+    }
 
-        /* En-tête principal - TITRE SEULEMENT */
-        .main-header {
-            background: #2c3e50;
-            color: white;
-            padding: 60px 40px;
-            text-align: center;
-            border-bottom: 3px solid #34495e;
-        }
+    /* En-tête principal - TITRE SEULEMENT */
+    .main-header {
+        background: #2c3e50;
+        color: white;
+        padding: 60px 40px;
+        text-align: center;
+        border-bottom: 3px solid #34495e;
+    }
 
-        .main-header h1 {
-            font-size: 2.5em;
-            margin-bottom: 0;
-            font-weight: 400;
-            letter-spacing: 1px;
-        }
+    .main-header h1 {
+        font-size: 2.5em;
+        margin-bottom: 0;
+        font-weight: 400;
+        letter-spacing: 1px;
+    }
 
-        /* SECTION INTRODUCTION */
-        .introduction-section {
-            padding: 60px 40px;
-            background: white;
-            border-bottom: 1px solid #e0e0e0;
-        }
+    /* SECTION INTRODUCTION */
+    .introduction-section {
+        padding: 60px 40px;
+        background: white;
+        border-bottom: 1px solid #e0e0e0;
+    }
 
-        .introduction-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    .introduction-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
 
-        .introduction-content p {
-            font-size: 1.2em;
-            line-height: 1.8;
-            text-align: justify;
-            color: #444;
-            margin-bottom: 15px;
-        }
+    .introduction-content p {
+        font-size: 1.2em;
+        line-height: 1.8;
+        text-align: justify;
+        color: #444;
+        margin-bottom: 15px;
+    }
 
-        /* Container principal */
-        .container {
-            background: white;
-        }
+    /* Container principal */
+    .container {
+        background: white;
+    }
 
-        /* Section zone d'étude */
-        .zone-etude-section {
-            padding: 60px 40px;
-            background: white;
-            border-bottom: 1px solid #e0e0e0;
-        }
+    /* Section zone d'étude */
+    .zone-etude-section {
+        padding: 60px 40px;
+        background: white;
+        border-bottom: 1px solid #e0e0e0;
+    }
 
-        .section-title {
-            text-align: center;
-            font-size: 2em;
-            color: #2c3e50;
-            margin-bottom: 40px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #2c3e50;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+    .section-title {
+        text-align: center;
+        font-size: 2em;
+        color: #2c3e50;
+        margin-bottom: 40px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #2c3e50;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-        .zone-etude-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-            align-items: start;
-        }
+    .zone-etude-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        max-width: 1400px;
+        margin: 0 auto;
+        align-items: start;
+    }
 
-        .text-block {
-            padding: 20px;
-        }
+    .text-block {
+        padding: 20px;
+    }
 
-        .text-block h3 {
-            color: #34495e;
-            font-size: 1.4em;
-            margin-bottom: 20px;
-        }
+    .text-block h3 {
+        color: #34495e;
+        font-size: 1.4em;
+        margin-bottom: 20px;
+    }
 
-        .text-block p {
-            line-height: 1.8;
-            color: #444;
-            margin-bottom: 15px;
-            text-align: justify;
-            font-size: 1.05em;
-        }
+    .text-block p {
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 15px;
+        text-align: justify;
+        font-size: 1.05em;
+    }
 
-        .map-block {
-            height: 500px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-        }
+    .map-block {
+        height: 500px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+    }
 
-        /* Section vulnérabilité */
-        .temperature-section {
-            padding: 60px 40px;
-            background: #f8f9fa;
-        }
+    /* Section vulnérabilité */
+    .temperature-section {
+        padding: 60px 40px;
+        background: #f8f9fa;
+    }
 
-        .temperature-intro {
-            max-width: 1400px;
-            margin: 0 auto 40px auto;
-            padding: 20px;
-        }
+    .temperature-intro {
+        max-width: 1400px;
+        margin: 0 auto 40px auto;
+        padding: 20px;
+    }
 
-        .temperature-intro p {
-            line-height: 1.8;
-            color: #444;
-            margin-bottom: 15px;
-            text-align: justify;
-            font-size: 1.05em;
-        }
+    .temperature-intro p {
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 15px;
+        text-align: justify;
+        font-size: 1.05em;
+    }
 
-        .temperature-maps {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+    .temperature-maps {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
 
-        .map-container {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
+    .map-container {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-        .map-header {
-            background: #34495e;
-            color: white;
-            padding: 15px 20px;
-            font-size: 1.1em;
-            font-weight: 500;
-        }
+    .map-header {
+        background: #34495e;
+        color: white;
+        padding: 15px 20px;
+        font-size: 1.1em;
+        font-weight: 500;
+    }
 
-        .map-wrapper {
-            height: 500px;
-            border: 1px solid #ddd;
-        }
+    .map-wrapper {
+        height: 500px;
+        border: 1px solid #ddd;
+    }
 
-        /* Section trois communes - ZONES DE TEXTE */
+    /* Section trois communes - ZONES DE TEXTE */
+    .trois-communes-text {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 30px;
+        max-width: 1400px;
+        margin: 40px auto 0 auto;
+    }
+
+    .commune-text-block {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .commune-text-block h3 {
+        color: #2c3e50;
+        font-size: 1.3em;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #34495e;
+    }
+
+    .commune-text-block p {
+        line-height: 1.7;
+        color: #444;
+        margin-bottom: 12px;
+        text-align: justify;
+        font-size: 1em;
+    }
+
+    /* Section trois communes - CARTES */
+    .trois-communes-maps {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* SECTION TEMPÉRATURE EN BAS */
+    .moyenne-temperature-section {
+        padding: 60px 40px;
+        background: white;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .moyenne-temperature-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        max-width: 1400px;
+        margin: 0 auto;
+        align-items: start;
+    }
+
+    /* Section carte interactive finale */
+    .carte-interactive-section {
+        padding: 60px 40px;
+        background: white;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .carte-interactive-container {
+        width: 100%;
+        height: 90vh;
+        min-height: 600px;
+        border: 2px solid #2c3e50;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        position: relative;
+    }
+
+    #map-interactive {
+        width: 100%;
+        height: 100%;
+    }
+    
+    /* Style pour le conteneur en fullscreen */
+    .fullscreen-active {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 9999 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .fullscreen-active #map-interactive {
+        height: 100% !important;
+    }
+
+    /* Style pour le contrôle des couches - FOND BLANC */
+    .leaflet-control-layers {
+        background: white !important;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .leaflet-control-layers-expanded {
+        padding: 10px;
+        background: white !important;
+    }
+
+    /* Contrôle personnalisé avec fond blanc */
+    .custom-layer-control {
+        background: white !important;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        max-width: 280px;
+        font-family: 'Georgia', 'Times New Roman', serif;
+    }
+    
+    .custom-layer-control h4 {
+        margin: 0 0 15px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #2c3e50;
+        color: #2c3e50;
+        font-size: 15px;
+        font-weight: 600;
+    }
+    
+    /* Section Fonds de carte */
+    .basemap-section {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .basemap-title {
+        font-weight: 600;
+        color: #34495e;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+    
+    .basemap-item {
+        margin: 6px 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .basemap-item input[type="radio"] {
+        margin-right: 8px;
+        cursor: pointer;
+    }
+    
+    .basemap-item label {
+        cursor: pointer;
+        font-size: 13px;
+        color: #444;
+    }
+    
+    /* Section Couches avec accordéon */
+    .layers-accordion {
+        margin-top: 10px;
+    }
+    
+    .accordion-header {
+        background: #f8f9fa;
+        padding: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        color: #2c3e50;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+        user-select: none;
+        font-size: 14px;
+    }
+    
+    .accordion-header:hover {
+        background: #e9ecef;
+    }
+    
+    .accordion-content {
+        max-height: 500px;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        padding-top: 10px;
+    }
+    
+    .accordion-content.hidden {
+        max-height: 0;
+        padding-top: 0;
+    }
+    
+    .layer-item {
+        margin: 8px 0;
+        display: flex;
+        align-items: center;
+        padding-left: 10px;
+    }
+    
+    .layer-item input[type="checkbox"] {
+        margin-right: 8px;
+        cursor: pointer;
+    }
+    
+    .layer-item label {
+        cursor: pointer;
+        font-size: 13px;
+        color: #444;
+    }
+
+    /* Section de recherche de commune */
+    .commune-search-section {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .commune-search-title {
+        font-weight: 600;
+        color: #34495e;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+    
+    .commune-search-input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 13px;
+        font-family: 'Georgia', 'Times New Roman', serif;
+        box-sizing: border-box;
+    }
+    
+    .commune-search-input:focus {
+        outline: none;
+        border-color: #2c3e50;
+    }
+    
+    .commune-suggestions {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-top: none;
+        border-radius: 0 0 4px 4px;
+        background: white;
+        display: none;
+    }
+    
+    .commune-suggestion-item {
+        padding: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: background 0.2s;
+    }
+    
+    .commune-suggestion-item:hover {
+        background: #f8f9fa;
+    }
+    
+    .commune-reset-btn {
+        width: 100%;
+        padding: 6px;
+        margin-top: 8px;
+        background: #e9ecef;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        color: #34495e;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    
+    .commune-reset-btn:hover {
+        background: #2c3e50;
+        color: white;
+    }
+    
+    .commune-reset-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Footer */
+    footer {
+        background: #34495e;
+        color: #ecf0f1;
+        text-align: center;
+        padding: 25px;
+        font-size: 0.9em;
+        border-top: 3px solid #2c3e50;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .zone-etude-content,
+        .temperature-maps,
+        .moyenne-temperature-content,
+        .trois-communes-maps,
         .trois-communes-text {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 30px;
-            max-width: 1400px;
-            margin: 40px auto 0 auto;
+            grid-template-columns: 1fr;
         }
-
-        .commune-text-block {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .commune-text-block h3 {
-            color: #2c3e50;
-            font-size: 1.3em;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #34495e;
-        }
-
-        .commune-text-block p {
-            line-height: 1.7;
-            color: #444;
-            margin-bottom: 12px;
-            text-align: justify;
-            font-size: 1em;
-        }
-
-        /* Section trois communes - CARTES */
-        .trois-communes-maps {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* SECTION TEMPÉRATURE EN BAS */
-        .moyenne-temperature-section {
-            padding: 60px 40px;
-            background: white;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .moyenne-temperature-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-            align-items: start;
-        }
-
-        /* Section carte interactive finale */
-        .carte-interactive-section {
-            padding: 60px 40px;
-            background: white;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .carte-interactive-container {
-            width: 100%;
-            height: 90vh; /* Prend 90% de la hauteur de la fenêtre, a modifier si l'on veut plus grand ou plus petit*/
-            min-height: 600px;
-            border: 2px solid #2c3e50;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        #map-interactive {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Style pour le contrôle des couches Leaflet */
-        .leaflet-control-layers {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        .leaflet-control-layers-expanded {
-            padding: 10px;
-        }
-
-        /* Footer */
-        footer {
-            background: #34495e;
-            color: #ecf0f1;
-            text-align: center;
-            padding: 25px;
-            font-size: 0.9em;
-            border-top: 3px solid #2c3e50;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .zone-etude-content,
-            .temperature-maps,
-            .moyenne-temperature-content,
-            .trois-communes-maps,
-            .trois-communes-text {
-                grid-template-columns: 1fr;
-            }
-        }
+    }
+        
     </style>
 </head>
 <body>
@@ -574,7 +772,8 @@
 
     <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
+    <script src="https://unpkg.com/leaflet.fullscreen@2.4.0/Control.FullScreen.js"></script>
+
     <!-- Fichiers de données -->
     <script src="icu_communes_0.js"></script>
     <script src="icu_pop_insee_stat_014.js"></script>
@@ -1539,29 +1738,32 @@
         };
         legendVulnPuylaurens.addTo(mapVulnPuylaurens);
 
-        // ==================== CARTE INTERACTIVE FINALE ====================
+        // ==================== CARTE INTERACTIVE FINALE AVEC FULLSCREEN ET ACCORDÉON ====================
 
         console.log("Initialisation de la carte interactive...");
 
-        // === CONFIGURATION DES FONDS DE CARTE POUR LA CARTE INTERACTIVE ===
-       
-        // Fond satellite (Esri World Imagery)
+        // === CONFIGURATION DES FONDS DE CARTE ===
         var fondCarteSatellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 19,
             attribution: '© Esri'
         });
 
-        // Fond classique (OpenStreetMap)
         var fondCarteClassique = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
             maxZoom: 18
         });
 
-        // Créer la carte
+        // Créer la carte avec le contrôle fullscreen
         const mapInteractive = L.map('map-interactive', {
             zoomControl: true,
             maxZoom: 28,
-            minZoom: 1
+            minZoom: 1,
+            fullscreenControl: true, // Active le contrôle fullscreen
+            fullscreenControlOptions: {
+                position: 'topleft',
+                title: 'Mode plein écran',
+                titleCancel: 'Quitter le plein écran'
+            }
         }).setView([43.78, 2.13], 9);
 
         // Ajouter le fond satellite par défaut
@@ -1591,7 +1793,6 @@
                     }
                 }
             });
-            // AJOUTER LA COUCHE À LA CARTE PAR DÉFAUT
             communesLayerInteractive.addTo(mapInteractive);
             console.log("✓ Couche communes créée et ajoutée à la carte");
         } else {
@@ -1632,12 +1833,9 @@
 
         // ===== COUCHE 3 : POPULATION 0-14 ANS =====
         console.log("Chargement population 0-14 ans...");
-
-        // Créer le pane pour la couche pop0014 interactive
         mapInteractive.createPane('pane_pop0014_interactive');
         mapInteractive.getPane('pane_pop0014_interactive').style.zIndex = 402;
 
-        // Fonction de style spécifique pour la carte interactive
         function stylePop0014Interactive(feature) {
             const pop0014 = feature.properties['pop0014'];
             const baseStyle = {
@@ -1679,8 +1877,6 @@
         }
 
         let pop0014LayerInteractive = null;
-
-        // Utiliser les données de population
         if (pop0014Data) {
             console.log("✓ Utilisation des données de population");
             pop0014LayerInteractive = L.geoJson(pop0014Data, {
@@ -1704,18 +1900,13 @@
                 }
             });
             console.log("✓ Couche pop 0-14 créée (prête pour le contrôle)");
-        } else {
-            console.log("✗ Aucune donnée de population 0-14 disponible");
         }
 
         // ===== COUCHE 4 : POPULATION 65+ ANS =====
         console.log("Chargement population 65+ ans...");
-
-        // Créer le pane pour la couche pop65p interactive
         mapInteractive.createPane('pane_pop65p_interactive');
         mapInteractive.getPane('pane_pop65p_interactive').style.zIndex = 403;
 
-        // Fonction de style spécifique pour la carte interactive
         function stylePopulationInteractive(feature) {
             const pop65p = feature.properties['pop65p'];
             const baseStyle = {
@@ -1754,8 +1945,6 @@
         }
 
         let pop65pLayerInteractive = null;
-
-        // Utiliser les données de population
         if (pop0014Data) {
             console.log("✓ Utilisation des données de population pour 65+");
             pop65pLayerInteractive = L.geoJson(pop0014Data, {
@@ -1779,11 +1968,20 @@
                 }
             });
             console.log("✓ Couche pop 65+ créée (prête pour le contrôle)");
-        } else {
-            console.log("✗ Aucune donnée de population 65+ disponible");
         }
 
-        // ===== FONCTION POUR LA CARTE INTERACTIVE ====================
+        // ===== COUCHES DE VULNÉRABILITÉ =====
+        console.log("Chargement des couches de vulnérabilité...");
+
+        mapInteractive.createPane('pane_vuln_albi_interactive');
+        mapInteractive.getPane('pane_vuln_albi_interactive').style.zIndex = 404;
+
+        mapInteractive.createPane('pane_vuln_castres_interactive');
+        mapInteractive.getPane('pane_vuln_castres_interactive').style.zIndex = 405;
+
+        mapInteractive.createPane('pane_vuln_puylaurens_interactive');
+        mapInteractive.getPane('pane_vuln_puylaurens_interactive').style.zIndex = 406;
+
         function styleVulnerabiliteInteractive(paneName) {
             return function(feature) {
                 const risqueScore = feature.properties['risque_score'];
@@ -1800,23 +1998,18 @@
                     interactive: true
                 };
                 
-                // 1.00 - 1.00 : Vert foncé
                 if (risqueScore >= 1.000000 && risqueScore <= 1.000000) {
                     return { ...baseStyle, fillColor: 'rgba(0,128,0,1.0)' };
                 }
-                // 1.00 - 1.50 : Vert clair
                 if (risqueScore > 1.000000 && risqueScore <= 1.500000) {
                     return { ...baseStyle, fillColor: 'rgba(144,238,144,1.0)' };
                 }
-                // 1.50 - 2.00 : Jaune
                 if (risqueScore > 1.500000 && risqueScore <= 2.000000) {
                     return { ...baseStyle, fillColor: 'rgba(255,255,0,1.0)' };
                 }
-                // 2.00 - 2.50 : Orange
                 if (risqueScore > 2.000000 && risqueScore <= 2.500000) {
                     return { ...baseStyle, fillColor: 'rgba(255,165,0,1.0)' };
                 }
-                // 2.50 - 3.00 : Rouge
                 if (risqueScore > 2.500000 && risqueScore <= 3.000000) {
                     return { ...baseStyle, fillColor: 'rgba(255,0,0,1.0)' };
                 }
@@ -1825,24 +2018,10 @@
             };
         }
 
-        // ===== COUCHES DE VULNÉRABILITÉ =====
-        console.log("Chargement des couches de vulnérabilité...");
-
-        // Créer les panes
-        mapInteractive.createPane('pane_vuln_albi_interactive');
-        mapInteractive.getPane('pane_vuln_albi_interactive').style.zIndex = 404;
-
-        mapInteractive.createPane('pane_vuln_castres_interactive');
-        mapInteractive.getPane('pane_vuln_castres_interactive').style.zIndex = 405;
-
-        mapInteractive.createPane('pane_vuln_puylaurens_interactive');
-        mapInteractive.getPane('pane_vuln_puylaurens_interactive').style.zIndex = 406;
-
         let vulnAlbiLayerInteractive = null;
         let vulnCastresLayerInteractive = null;
         let vulnPuylaurensLayerInteractive = null;
 
-        // Couche Albi
         if (typeof json_risquealbi_1 !== 'undefined') {
             console.log("✓ Données vulnérabilité Albi disponibles");
             vulnAlbiLayerInteractive = L.geoJson(json_risquealbi_1, {
@@ -1854,7 +2033,6 @@
             console.log("✓ Couche vulnérabilité Albi créée");
         }
 
-        // Couche Castres
         if (typeof json_risquecastres_1 !== 'undefined') {
             console.log("✓ Données vulnérabilité Castres disponibles");
             vulnCastresLayerInteractive = L.geoJson(json_risquecastres_1, {
@@ -1866,7 +2044,6 @@
             console.log("✓ Couche vulnérabilité Castres créée");
         }
 
-        // Couche Puylaurens
         if (typeof json_risquepuylaurens_1 !== 'undefined') {
             console.log("✓ Données vulnérabilité Puylaurens disponibles");
             vulnPuylaurensLayerInteractive = L.geoJson(json_risquepuylaurens_1, {
@@ -1878,63 +2055,435 @@
             console.log("✓ Couche vulnérabilité Puylaurens créée");
         }
 
-        // ===== CONTRÔLE DES COUCHES =====
-        console.log("Création du contrôle des couches...");
+        // ===== CONTRÔLE DES COUCHES PERSONNALISÉ AVEC ACCORDÉON =====
+        console.log("Création du contrôle des couches avec accordéon...");
 
-        const baseMaps = {
-            "ESRI Satellite": fondCarteSatellite,
-            "OpenStreetMap": fondCarteClassique
+        // Créer un contrôle personnalisé
+        const CustomLayerControl = L.Control.extend({
+            options: {
+                position: 'topright'
+            },
+            
+            onAdd: function(map) {
+                const container = L.DomUtil.create('div', 'custom-layer-control leaflet-bar');
+                
+                let html = '<h4>Couches de données</h4>';
+                
+                // ===== SECTION RECHERCHE DE COMMUNE (NOUVEAU) =====
+                html += '<div class="commune-search-section">';
+                html += '<div class="commune-search-title"> Rechercher une commune</div>';
+                html += '<input type="text" id="commune-search-input" class="commune-search-input" placeholder="Ex: Albi, Castres..." oninput="searchCommune(this.value)">';
+                html += '<div id="commune-suggestions" class="commune-suggestions"></div>';
+                html += '<button id="commune-reset-btn" class="commune-reset-btn" onclick="resetCommuneFilter()" disabled>Réinitialiser le filtre</button>';
+                html += '</div>';
+                
+                // Section Fonds de carte (toujours visible)
+                html += '<div class="basemap-section">';
+                html += '<div class="basemap-title">Fonds de carte</div>';
+                html += '<div class="basemap-item">';
+                html += '<input type="radio" name="basemap" id="base-satellite" checked onchange="changeBasemap(\'satellite\')">';
+                html += '<label for="base-satellite">ESRI Satellite</label>';
+                html += '</div>';
+                html += '<div class="basemap-item">';
+                html += '<input type="radio" name="basemap" id="base-osm" onchange="changeBasemap(\'osm\')">';
+                html += '<label for="base-osm">OpenStreetMap</label>';
+                html += '</div>';
+                html += '</div>';
+                
+                // Section Couches avec accordéon
+                html += '<div class="layers-accordion">';
+                html += '<div class="accordion-header" onclick="toggleAccordion()">';
+                html += 'Couches cartographiques';
+                html += '</div>';
+                html += '<div class="accordion-content" id="accordion-layers">';
+                
+                // Toutes les couches dans le même groupe
+                if (communesLayerInteractive) {
+                    html += '<div class="layer-item">';
+                    html += '<input type="checkbox" id="layer-communes" checked onchange="toggleLayer(\'communes\')">';
+                    html += '<label for="layer-communes">Limites communales</label>';
+                    html += '</div>';
+                }
+                
+                if (tempCommuneLayerInteractive) {
+                    html += '<div class="layer-item">';
+                    html += '<input type="checkbox" id="layer-temp" onchange="toggleLayer(\'temp\')">';
+                    html += '<label for="layer-temp">Température moyenne</label>';
+                    html += '</div>';
+                }
+                
+                if (pop0014LayerInteractive) {
+                    html += '<div class="layer-item">';
+                    html += '<input type="checkbox" id="layer-pop0014" onchange="toggleLayer(\'pop0014\')">';
+                    html += '<label for="layer-pop0014">Population 0-14 ans</label>';
+                    html += '</div>';
+                }
+                
+                if (pop65pLayerInteractive) {
+                    html += '<div class="layer-item">';
+                    html += '<input type="checkbox" id="layer-pop65p" onchange="toggleLayer(\'pop65p\')">';
+                    html += '<label for="layer-pop65p">Population 65+ ans</label>';
+                    html += '</div>';
+                }
+                
+                if (vulnAlbiLayerInteractive) {
+                    html += '<div class="layer-item">';
+                    html += '<input type="checkbox" id="layer-vuln-albi" onchange="toggleLayer(\'vuln-albi\')">';
+                    html += '<label for="layer-vuln-albi">Vulnérabilité Albi</label>';
+                    html += '</div>';
+                }
+                
+                if (vulnCastresLayerInteractive) {
+                    html += '<div class="layer-item">';
+                    html += '<input type="checkbox" id="layer-vuln-castres" onchange="toggleLayer(\'vuln-castres\')">';
+                    html += '<label for="layer-vuln-castres">Vulnérabilité Castres</label>';
+                    html += '</div>';
+                }
+                
+                if (vulnPuylaurensLayerInteractive) {
+                    html += '<div class="layer-item">';
+                    html += '<input type="checkbox" id="layer-vuln-puylaurens" onchange="toggleLayer(\'vuln-puylaurens\')">';
+                    html += '<label for="layer-vuln-puylaurens">Vulnérabilité Puylaurens</label>';
+                    html += '</div>';
+                }
+                
+                html += '</div>'; // Fin accordion-content
+                html += '</div>'; // Fin layers-accordion
+                
+                container.innerHTML = html;
+                
+                // Empêcher la propagation des événements de la carte
+                L.DomEvent.disableClickPropagation(container);
+                L.DomEvent.disableScrollPropagation(container);
+                
+                return container;
+            }
+        });
+
+        mapInteractive.addControl(new CustomLayerControl());
+
+        // ===== VARIABLES GLOBALES POUR LE FILTRE =====
+        let selectedCommune = null;
+        let selectedCommuneGeometry = null;
+        let allCommunes = [];
+
+        // Extraire la liste des communes au chargement
+        if (communesLayerInteractive) {
+            communesLayerInteractive.eachLayer(function(layer) {
+                if (layer.feature && layer.feature.properties && layer.feature.properties.nom) {
+                    allCommunes.push({
+                        nom: layer.feature.properties.nom,
+                        geometry: layer.feature.geometry,
+                        bounds: layer.getBounds()
+                    });
+                }
+            });
+            // Trier par ordre alphabétique
+            allCommunes.sort((a, b) => a.nom.localeCompare(b.nom));
+        }
+
+        // ===== FONCTION DE RECHERCHE DE COMMUNE =====
+        window.searchCommune = function(searchText) {
+            const suggestionsDiv = document.getElementById('commune-suggestions');
+            
+            if (!searchText || searchText.length < 2) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            
+            // Filtrer les communes qui correspondent
+            const matches = allCommunes.filter(commune => 
+                commune.nom.toLowerCase().includes(searchText.toLowerCase())
+            );
+            
+            if (matches.length === 0) {
+                suggestionsDiv.innerHTML = '<div class="commune-suggestion-item" style="color:#999;">Aucune commune trouvée</div>';
+                suggestionsDiv.style.display = 'block';
+                return;
+            }
+            
+            // Afficher les suggestions
+            let html = '';
+            matches.slice(0, 10).forEach(commune => {
+                html += '<div class="commune-suggestion-item" onclick="selectCommune(\'' + commune.nom + '\')">' + commune.nom + '</div>';
+            });
+            
+            suggestionsDiv.innerHTML = html;
+            suggestionsDiv.style.display = 'block';
         };
 
-        const overlayMaps = {};
+        // ===== FONCTION DE SÉLECTION D'UNE COMMUNE =====
+        window.selectCommune = function(communeName) {
+            const commune = allCommunes.find(c => c.nom === communeName);
+            if (!commune) return;
+            
+            selectedCommune = communeName;
+            selectedCommuneGeometry = commune.geometry;
+            
+            // Mettre à jour l'input
+            document.getElementById('commune-search-input').value = communeName;
+            document.getElementById('commune-suggestions').style.display = 'none';
+            
+            // Activer le bouton reset
+            document.getElementById('commune-reset-btn').disabled = false;
+            
+            // Zoomer sur la commune
+            mapInteractive.fitBounds(commune.bounds, { padding: [50, 50] });
+            
+            // Appliquer le filtre sur toutes les couches actives
+            applyFilterToAllLayers();
+            
+            console.log('✓ Commune sélectionnée :', communeName);
+        };
 
-        if (communesLayerInteractive) {
-            overlayMaps["Limites communales"] = communesLayerInteractive;
-            console.log("✓ Couche communes ajoutée au contrôle");
+        // ===== FONCTION DE RÉINITIALISATION =====
+        window.resetCommuneFilter = function() {
+            selectedCommune = null;
+            selectedCommuneGeometry = null;
+            
+            // Réinitialiser l'input
+            document.getElementById('commune-search-input').value = '';
+            document.getElementById('commune-suggestions').style.display = 'none';
+            document.getElementById('commune-reset-btn').disabled = true;
+            
+            // Réafficher toutes les couches normalement
+            applyFilterToAllLayers();
+            
+            // Revenir à la vue d'ensemble
+            if (communesLayerInteractive) {
+                mapInteractive.fitBounds(communesLayerInteractive.getBounds());
+            }
+            
+            console.log('✓ Filtre réinitialisé');
+        };
+
+        // ===== VÉRIFIER SI UNE FEATURE EST DANS LA COMMUNE =====
+        function isFeatureInCommune(layer) {
+            if (!selectedCommuneGeometry || !layer.feature) return false;
+            
+            try {
+                const bounds = layer.getBounds();
+                const center = bounds.getCenter();
+                
+                const communeLayer = L.geoJSON(selectedCommuneGeometry);
+                let isInside = false;
+                
+                communeLayer.eachLayer(function(cLayer) {
+                    if (cLayer.getBounds().contains(center)) {
+                        isInside = true;
+                    }
+                });
+                
+                return isInside;
+            } catch (e) {
+                return false;
+            }
         }
 
-        if (tempCommuneLayerInteractive) {
-            overlayMaps["Température moyenne"] = tempCommuneLayerInteractive;
-            console.log("✓ Couche température ajoutée au contrôle");
+        // ===== FONCTION D'APPLICATION DU FILTRE (VERSION CORRIGÉE) =====
+        function applyFilterToAllLayers() {
+            const layersToFilter = [
+                { 
+                    layer: tempCommuneLayerInteractive, 
+                    name: 'temp',
+                    styleFunc: styleTempCommune
+                },
+                { 
+                    layer: pop0014LayerInteractive, 
+                    name: 'pop0014',
+                    styleFunc: stylePop0014Interactive
+                },
+                { 
+                    layer: pop65pLayerInteractive, 
+                    name: 'pop65p',
+                    styleFunc: stylePopulationInteractive
+                },
+                { 
+                    layer: vulnAlbiLayerInteractive, 
+                    name: 'vuln-albi',
+                    styleFunc: styleVulnerabiliteInteractive('pane_vuln_albi_interactive')
+                },
+                { 
+                    layer: vulnCastresLayerInteractive, 
+                    name: 'vuln-castres',
+                    styleFunc: styleVulnerabiliteInteractive('pane_vuln_castres_interactive')
+                },
+                { 
+                    layer: vulnPuylaurensLayerInteractive, 
+                    name: 'vuln-puylaurens',
+                    styleFunc: styleVulnerabiliteInteractive('pane_vuln_puylaurens_interactive')
+                }
+            ];
+            
+            layersToFilter.forEach(item => {
+                if (item.layer && mapInteractive.hasLayer(item.layer)) {
+                    item.layer.eachLayer(function(layer) {
+                        if (selectedCommune) {
+                            const isInCommune = isFeatureInCommune(layer);
+                            const originalStyle = item.styleFunc(layer.feature);
+                            
+                            if (isInCommune) {
+                                layer.setStyle(originalStyle);
+                            } else {
+                                layer.setStyle({ 
+                                    fillOpacity: 0.1, 
+                                    opacity: 0.3 
+                                });
+                            }
+                        } else {
+                            const originalStyle = item.styleFunc(layer.feature);
+                            layer.setStyle(originalStyle);
+                        }
+                    });
+                }
+            });
+            
+            if (communesLayerInteractive && mapInteractive.hasLayer(communesLayerInteractive)) {
+                communesLayerInteractive.eachLayer(function(layer) {
+                    if (selectedCommune && layer.feature.properties.nom === selectedCommune) {
+                        layer.setStyle({ 
+                            color: '#2c3e50',
+                            weight: 3,
+                            fillColor: '#f4e4c1',
+                            fillOpacity: 0.25
+                        });
+                    } else {
+                        layer.setStyle({ 
+                            color: '#ffffff',
+                            weight: 0.5,
+                            fillColor: '#f4e4c1',
+                            fillOpacity: selectedCommune ? 0.05 : 0.25
+                        });
+                    }
+                });
+            }
         }
 
-        if (pop0014LayerInteractive) {
-            overlayMaps["Population 0-14 ans"] = pop0014LayerInteractive;
-            console.log("✓ Couche pop 0-14 ajoutée au contrôle");
-        }
+        console.log('✓ Système de filtre par commune initialisé avec', allCommunes.length, 'communes');
 
-        if (pop65pLayerInteractive) {
-            overlayMaps["Population 65+ ans"] = pop65pLayerInteractive;
-            console.log("✓ Couche pop 65+ ajoutée au contrôle");
-        }
+        // ===== FONCTION TOGGLE ACCORDÉON =====
+        window.toggleAccordion = function() {
+            const content = document.getElementById('accordion-layers');
+            const header = document.querySelector('.accordion-header');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                header.classList.remove('collapsed');
+            } else {
+                content.classList.add('hidden');
+                header.classList.add('collapsed');
+            }
+        };
 
-        if (vulnAlbiLayerInteractive) {
-            overlayMaps["Vulnérabilité Albi"] = vulnAlbiLayerInteractive;
-            console.log("✓ Couche vulnérabilité Albi ajoutée au contrôle");
-        }
+        // ===== FONCTION CHANGEMENT FOND DE CARTE =====
+        window.changeBasemap = function(type) {
+            if (type === 'satellite') {
+                mapInteractive.removeLayer(fondCarteClassique);
+                mapInteractive.addLayer(fondCarteSatellite);
+            } else {
+                mapInteractive.removeLayer(fondCarteSatellite);
+                mapInteractive.addLayer(fondCarteClassique);
+            }
+        };
 
-        if (vulnCastresLayerInteractive) {
-            overlayMaps["Vulnérabilité Castres"] = vulnCastresLayerInteractive;
-            console.log("✓ Couche vulnérabilité Castres ajoutée au contrôle");
-        }
-
-        if (vulnPuylaurensLayerInteractive) {
-            overlayMaps["Vulnérabilité Puylaurens"] = vulnPuylaurensLayerInteractive;
-            console.log("✓ Couche vulnérabilité Puylaurens ajoutée au contrôle");
-        }
-
-        // Ajouter le contrôle des couches
-        L.control.layers(baseMaps, overlayMaps, {
-            position: 'topright',
-            collapsed: false
-        }).addTo(mapInteractive);
-
-        console.log("Contrôle des couches créé avec", Object.keys(overlayMaps).length, "couches");
-
-        // Ajuster la vue pour voir toutes les communes
-        if (communesLayerInteractive) {
-            mapInteractive.fitBounds(communesLayerInteractive.getBounds());
-        }
+        // ===== FONCTION TOGGLE LAYER (VERSION CORRIGÉE) =====
+        window.toggleLayer = function(layerName) {
+            const checkbox = document.getElementById('layer-' + layerName);
+            const isChecked = checkbox.checked;
+            
+            switch(layerName) {
+                case 'communes':
+                    if (communesLayerInteractive) {
+                        if (isChecked) {
+                            mapInteractive.addLayer(communesLayerInteractive);
+                        } else {
+                            mapInteractive.removeLayer(communesLayerInteractive);
+                        }
+                    }
+                    break;
+                case 'temp':
+                    if (tempCommuneLayerInteractive) {
+                        if (isChecked) {
+                            mapInteractive.addLayer(tempCommuneLayerInteractive);
+                            tempCommuneLayerInteractive.eachLayer(function(layer) {
+                                layer.setStyle(styleTempCommune(layer.feature));
+                            });
+                        } else {
+                            mapInteractive.removeLayer(tempCommuneLayerInteractive);
+                        }
+                    }
+                    break;
+                case 'pop0014':
+                    if (pop0014LayerInteractive) {
+                        if (isChecked) {
+                            mapInteractive.addLayer(pop0014LayerInteractive);
+                            pop0014LayerInteractive.eachLayer(function(layer) {
+                                layer.setStyle(stylePop0014Interactive(layer.feature));
+                            });
+                        } else {
+                            mapInteractive.removeLayer(pop0014LayerInteractive);
+                        }
+                    }
+                    break;
+                case 'pop65p':
+                    if (pop65pLayerInteractive) {
+                        if (isChecked) {
+                            mapInteractive.addLayer(pop65pLayerInteractive);
+                            pop65pLayerInteractive.eachLayer(function(layer) {
+                                layer.setStyle(stylePopulationInteractive(layer.feature));
+                            });
+                        } else {
+                            mapInteractive.removeLayer(pop65pLayerInteractive);
+                        }
+                    }
+                    break;
+                case 'vuln-albi':
+                    if (vulnAlbiLayerInteractive) {
+                        if (isChecked) {
+                            mapInteractive.addLayer(vulnAlbiLayerInteractive);
+                            vulnAlbiLayerInteractive.eachLayer(function(layer) {
+                                const styleFunc = styleVulnerabiliteInteractive('pane_vuln_albi_interactive');
+                                layer.setStyle(styleFunc(layer.feature));
+                            });
+                        } else {
+                            mapInteractive.removeLayer(vulnAlbiLayerInteractive);
+                        }
+                    }
+                    break;
+                case 'vuln-castres':
+                    if (vulnCastresLayerInteractive) {
+                        if (isChecked) {
+                            mapInteractive.addLayer(vulnCastresLayerInteractive);
+                            vulnCastresLayerInteractive.eachLayer(function(layer) {
+                                const styleFunc = styleVulnerabiliteInteractive('pane_vuln_castres_interactive');
+                                layer.setStyle(styleFunc(layer.feature));
+                            });
+                        } else {
+                            mapInteractive.removeLayer(vulnCastresLayerInteractive);
+                        }
+                    }
+                    break;
+                case 'vuln-puylaurens':
+                    if (vulnPuylaurensLayerInteractive) {
+                        if (isChecked) {
+                            mapInteractive.addLayer(vulnPuylaurensLayerInteractive);
+                            vulnPuylaurensLayerInteractive.eachLayer(function(layer) {
+                                const styleFunc = styleVulnerabiliteInteractive('pane_vuln_puylaurens_interactive');
+                                layer.setStyle(styleFunc(layer.feature));
+                            });
+                        } else {
+                            mapInteractive.removeLayer(vulnPuylaurensLayerInteractive);
+                        }
+                    }
+                    break;
+            }
+            
+            // Appliquer le filtre si une commune est sélectionnée
+            applyFilterToAllLayers();
+            
+            // Mettre à jour la légende
+            updateLegendInteractive();
+        };
 
         // ===== LÉGENDE DYNAMIQUE =====
         const legendInteractive = L.control({ position: 'bottomleft' });
@@ -1955,7 +2504,6 @@
 
         legendInteractive.addTo(mapInteractive);
 
-        // Fonction de mise à jour de la légende
         function updateLegendInteractive() {
             const legendDiv = document.getElementById('legend-interactive');
             if (!legendDiv) return;
@@ -1963,16 +2511,14 @@
             let html = '<h4 style="margin:0 0 10px 0; font-size:1em; font-weight:600; color:#2c3e50; border-bottom:2px solid #2c3e50; padding-bottom:8px;">Légende</h4>';
             let hasLayers = false;
             
-            // Limites communales (toujours visible si activée)
             if (communesLayerInteractive && mapInteractive.hasLayer(communesLayerInteractive)) {
                 hasLayers = true;
                 html += '<div style="margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #ddd;">';
                 html += '<strong style="color:#2c3e50; display:block; margin-bottom:5px; font-size:0.9em;">Limites communales</strong>';
-                html += '<div style="width:25px; height:15px; background:rgba(244,228,193,0.25); margin-right:8px; border:1px solid #ffffff;"></div><span style="font-size:0.8em;">Fond gris 25%</span></div>';
+                html += '<div style="width:25px; height:15px; background:rgba(244,228,193,0.25); margin-right:8px; border:1px solid #ffffff;"></div>';
                 html += '</div>';
             }
             
-            // Température
             if (tempCommuneLayerInteractive && mapInteractive.hasLayer(tempCommuneLayerInteractive)) {
                 hasLayers = true;
                 html += '<div style="margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #ddd;">';
@@ -1983,7 +2529,6 @@
                 html += '</div>';
             }
             
-            // Population 0-14
             if (pop0014LayerInteractive && mapInteractive.hasLayer(pop0014LayerInteractive)) {
                 hasLayers = true;
                 html += '<div style="margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #ddd;">';
@@ -1991,11 +2536,9 @@
                 html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,0,0,1.0); margin-right:8px; border:1px solid #999;"></div><span style="font-size:0.8em;">418 - 752</span></div>';
                 html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,85,85,1.0); margin-right:8px; border:1px solid #999;"></div><span style="font-size:0.8em;">156 - 263</span></div>';
                 html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,170,170,1.0); margin-right:8px; border:1px solid #999;"></div><span style="font-size:0.8em;">41 - 88</span></div>';
-                html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,213,213,1.0); margin-right:8px; border:1px solid #999;"></div><span style="font-size:0.8em;">12 - 41</span></div>';
                 html += '</div>';
             }
             
-            // Population 65+
             if (pop65pLayerInteractive && mapInteractive.hasLayer(pop65pLayerInteractive)) {
                 hasLayers = true;
                 html += '<div style="margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #ddd;">';
@@ -2003,11 +2546,9 @@
                 html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,0,0,1.0); margin-right:8px; border:1px solid #999;"></div><span style="font-size:0.8em;">853 - 1289</span></div>';
                 html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,85,85,1.0); margin-right:8px; border:1px solid #999;"></div><span style="font-size:0.8em;">349 - 608</span></div>';
                 html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,170,170,1.0); margin-right:8px; border:1px solid #999;"></div><span style="font-size:0.8em;">79 - 181</span></div>';
-                html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,213,213,1.0); margin-right:8px; border:1px solid #999;"></div><span style="font-size:0.8em;">23 - 78</span></div>';
                 html += '</div>';
             }
             
-            // Vulnérabilité
             const vulnLayers = [
                 { layer: vulnAlbiLayerInteractive, name: 'Albi' },
                 { layer: vulnCastresLayerInteractive, name: 'Castres' },
@@ -2024,7 +2565,6 @@
                 html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,165,0,0.7); margin-right:8px; border:1px solid #232323;"></div><span style="font-size:0.8em;">2.0 - 2.5 (Élevé)</span></div>';
                 html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,255,0,0.7); margin-right:8px; border:1px solid #232323;"></div><span style="font-size:0.8em;">1.5 - 2.0 (Moyen)</span></div>';
                 html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(144,238,144,0.7); margin-right:8px; border:1px solid #232323;"></div><span style="font-size:0.8em;">1.0 - 1.5 (Faible)</span></div>';
-                html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(0,128,0,0.7); margin-right:8px; border:1px solid #232323;"></div><span style="font-size:0.8em;">1.0 - 1.0 (Très faible)</span></div>';
                 html += '</div>';
             }
 
@@ -2035,15 +2575,15 @@
             legendDiv.innerHTML = html;
         }
 
-        // Événements pour mettre à jour la légende
-        mapInteractive.on('overlayadd', updateLegendInteractive);
-        mapInteractive.on('overlayremove', updateLegendInteractive);
-
         // Mise à jour initiale
         updateLegendInteractive();
 
-        console.log("✓ Carte interactive finalisée");
-        console.log("✓ Toutes les cartes sont initialisées et prêtes");
+        // Ajuster la vue
+        if (communesLayerInteractive) {
+            mapInteractive.fitBounds(communesLayerInteractive.getBounds());
+        }
+
+        console.log("✓ Carte interactive avec fullscreen et accordéon finalisée");
     </script>
 </body>
 </html>
