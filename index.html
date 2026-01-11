@@ -231,7 +231,7 @@
 
     .carte-interactive-container {
         width: 100%;
-        height: 90vh;
+        height: 98vh;
         min-height: 600px;
         border: 2px solid #2c3e50;
         border-radius: 8px;
@@ -782,6 +782,9 @@
     <script src="risquealbi_1.js"></script>
     <script src="risquecastres_1.js"></script>
     <script src="risquepuylaurens_1.js"></script>
+    <script src="ICU_MODELISE_castresICU_modelise_0.js"></script>
+    <script src="ICU_MODELISE_albiICU_modelise_0.js"></script>
+    <script src="ICU_MODELISE_puylaurensICU_modelise_0.js"></script>
     
     <script>
         // ==================== CARTE 1 : ZONE D'ÉTUDE ====================
@@ -1339,94 +1342,336 @@
         // ==================== FOCUS SUR TROIS COMMUNES ====================
         console.log("Initialisation des cartes de focus sur trois communes...");
 
-        // 1. CARTE CASTRES (map-commune1)
+        // ==================== CARTE CASTRES (ICU) ====================
         const mapCommune1 = L.map('map-commune1', {
             zoomControl: true,
             maxZoom: 28,
             minZoom: 1,
-            scrollWheelZoom: false, // Désactive le zoom avec la molette pour éviter les conflits peut être réactivé une fois les cartos en place
+            scrollWheelZoom: true,
             dragging: true,
             touchZoom: true,
             doubleClickZoom: true,
             boxZoom: true,
             keyboard: true
-        }).setView([43.6045, 2.2405], 13); // Coordonnées de Castres, zoom 13
+        }).setView([43.6045, 2.2405], 13);
 
-        // Ajouter le fond de carte OSM
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
             maxZoom: 18,
             minZoom: 10
         }).addTo(mapCommune1);
 
-        // Ajouter un marqueur pour indiquer le centre de Castres
-        L.marker([43.6045, 2.2405], {
-            title: 'Centre de Castres',
-            alt: 'Centre de Castres',
-            riseOnHover: true
-        }).addTo(mapCommune1)
-          .bindPopup('<b>Castres</b><br>Sous-préfecture du Tarn<br>Population : ~42 000 hab.')
-          .openPopup();
+        // Fonction de style pour ICU Castres (basée sur ICU_predite)
+        function styleICUCastres(feature) {
+            const icuPredite = feature.properties['ICU_predite'];
+            const baseStyle = {
+                pane: 'pane_icu_castres',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                interactive: true
+            };
+            
+            if (icuPredite === undefined || icuPredite === null || isNaN(parseFloat(icuPredite))) {
+                return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+            }
+            
+            const valeur = parseFloat(icuPredite);
+            
+            if (valeur >= 0.60 && valeur < 2.49) return { ...baseStyle, fillColor: 'rgba(43,131,186,1.0)' };
+            if (valeur >= 2.49 && valeur < 4.01) return { ...baseStyle, fillColor: 'rgba(171,221,164,1.0)' };
+            if (valeur >= 4.01 && valeur < 5.4) return { ...baseStyle, fillColor: 'rgba(255,255,191,1.0)' };
+            if (valeur >= 5.4 && valeur < 6.18) return { ...baseStyle, fillColor: 'rgba(253,174,97,1.0)' };
+            if (valeur >= 6.18) return { ...baseStyle, fillColor: 'rgba(215,25,28,1.0)' };
+        }
 
-        // 2. CARTE ALBI (map-albi)
+        // Créer le pane
+        mapCommune1.createPane('pane_icu_castres');
+        mapCommune1.getPane('pane_icu_castres').style.zIndex = 400;
+
+        // Ajouter la couche ICU Castres
+        if (typeof json_ICU_MODELISE_castresICU_modelise_0 !== 'undefined') {
+            const icuCastresLayer = L.geoJson(json_ICU_MODELISE_castresICU_modelise_0, {
+                style: styleICUCastres,
+                onEachFeature: function(feature, layer) {
+                    let popupContent = '<table style="width:100%; border-collapse: collapse;">';
+                    popupContent += '<tr><td colspan="2" style="font-weight:bold; font-size:1.1em; padding:5px; background:#2c3e50; color:white;">ICU Castres</td></tr>';
+                    
+                    if (feature.properties['ICU_predite'] !== undefined) {
+                        popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>ICU prédite (température ressentie supplémentaire par rapport à la normal)</strong></td><td style="padding:5px;">' + 
+                                        feature.properties['ICU_predite'].toFixed(2) + '°C</td></tr>';
+                    }
+                    if (feature.properties['ICU_pred_classe']) {
+                        popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>Classe ICU</strong></td><td style="padding:5px;">' + 
+                                        feature.properties['ICU_pred_classe'] + '</td></tr>';
+                    }
+                    if (feature.properties['pop'] !== undefined) {
+                        popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>Population</strong></td><td style="padding:5px;">' + 
+                                        Math.round(feature.properties['pop']) + ' hab.</td></tr>';
+                    }
+                    
+                    popupContent += '</table>';
+                    layer.bindPopup(popupContent, { maxHeight: 400 });
+                }
+            }).addTo(mapCommune1);
+            mapCommune1.fitBounds(icuCastresLayer.getBounds());
+        }
+
+        // Légende pour Castres
+        const legendCastres = L.control({ position: 'bottomright' });
+        legendCastres.onAdd = function(map) {
+            const div = L.DomUtil.create('div');
+            div.style.background = 'white';
+            div.style.padding = '15px';
+            div.style.border = '1px solid #ddd';
+            div.style.borderRadius = '5px';
+            
+            div.innerHTML = '<h4 style="margin:0 0 10px 0; font-size:0.95em; font-weight:600;">ICU Prédite(°C)</h4>';
+            
+            const categories = [
+            { label: '6.18 - 7.26 (Très élevé)', color: 'rgba(215,25,28,1.0)' },
+            { label: '5.4 - 6.18 (Élevé)', color: 'rgba(253,174,97,1.0)' },
+            { label: '4.01 - 5.4 (Moyen)', color: 'rgba(255,255,191,1.0)' },
+            { label: '2.49 - 4.01 (Faible)', color: 'rgba(171,221,164,1.0)' },
+            { label: '0.60 - 2.49 (Très faible)', color: 'rgba(43,131,186,1.0)' }
+        ];
+            
+            categories.forEach(cat => {
+                div.innerHTML += 
+                    '<div style="display:flex; align-items:center; margin:5px 0; font-size:0.9em;">' +
+                    '<div style="width:30px; height:20px; background:' + cat.color + '; margin-right:10px; border:1px solid #232323;"></div>' +
+                    '<span>' + cat.label + '</span>' +
+                    '</div>';
+            });
+            
+            return div;
+        };
+        legendCastres.addTo(mapCommune1);
+
+        // ==================== CARTE ALBI (ICU) ====================
         const mapAlbi = L.map('map-albi', {
             zoomControl: true,
             maxZoom: 28,
             minZoom: 1,
-            scrollWheelZoom: false,
+            scrollWheelZoom: true,
             dragging: true,
             touchZoom: true,
             doubleClickZoom: true,
             boxZoom: true,
             keyboard: true
-        }).setView([43.9288, 2.1318], 13); // Coordonnées d'Albi, zoom 13
+        }).setView([43.9288, 2.1318], 13);
 
-        // Ajouter le fond de carte OSM
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
             maxZoom: 18,
             minZoom: 10
         }).addTo(mapAlbi);
 
-        // Ajouter un marqueur pour indiquer le centre d'Albi
-        L.marker([43.9288, 2.1318], {
-            title: "Centre d'Albi",
-            alt: "Centre d'Albi",
-            riseOnHover: true
-        }).addTo(mapAlbi)
-          .bindPopup('<b>Albi</b><br>Préfecture du Tarn<br>Population : ~51 000 hab.')
-          .openPopup();
+        // Fonction de style pour ICU Albi
+        function styleICUAlbi(feature) {
+            const icuPredite = feature.properties['ICU_predite'];
+            const baseStyle = {
+                pane: 'pane_icu_albi',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                interactive: true
+            };
+            
+            // Vérification stricte de la valeur
+            if (icuPredite === undefined || icuPredite === null || isNaN(parseFloat(icuPredite))) {
+                return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+            }
+            
+            const valeur = parseFloat(icuPredite);
+            
+            if (valeur >= 0.60 && valeur < 2.49) return { ...baseStyle, fillColor: 'rgba(43,131,186,1.0)' };
+            if (valeur >= 2.49 && valeur < 4.01) return { ...baseStyle, fillColor: 'rgba(171,221,164,1.0)' };
+            if (valeur >= 4.01 && valeur < 5.4) return { ...baseStyle, fillColor: 'rgba(255,255,191,1.0)' };
+            if (valeur >= 5.4 && valeur < 6.18) return { ...baseStyle, fillColor: 'rgba(253,174,97,1.0)' };
+            if (valeur >= 6.18) return { ...baseStyle, fillColor: 'rgba(215,25,28,1.0)' };
+        }
 
-        // 3. CARTE PUYLAURENS (map-commune3)
+        mapAlbi.createPane('pane_icu_albi');
+        mapAlbi.getPane('pane_icu_albi').style.zIndex = 400;
+
+        if (typeof json_ICU_MODELISE_albiICU_modelise_0 !== 'undefined') {
+            const icuAlbiLayer = L.geoJson(json_ICU_MODELISE_albiICU_modelise_0, {
+                style: styleICUAlbi,
+                onEachFeature: function(feature, layer) {
+                    let popupContent = '<table style="width:100%; border-collapse: collapse;">';
+                    popupContent += '<tr><td colspan="2" style="font-weight:bold; font-size:1.1em; padding:5px; background:#2c3e50; color:white;">ICU Albi</td></tr>';
+                    
+                    if (feature.properties['ICU_predite'] !== undefined) {
+                        popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>ICU prédite (température ressentie supplémentaire par rapport à la normal)</strong></td><td style="padding:5px;">' + 
+                                        feature.properties['ICU_predite'].toFixed(2) + '°C</td></tr>';
+                    }
+                    if (feature.properties['ICU_pred_classe']) {
+                        popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>Classe ICU</strong></td><td style="padding:5px;">' + 
+                                        feature.properties['ICU_pred_classe'] + '</td></tr>';
+                    }
+                    if (feature.properties['pop'] !== undefined) {
+                        popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>Population</strong></td><td style="padding:5px;">' + 
+                                        Math.round(feature.properties['pop']) + ' hab.</td></tr>';
+                    }
+                    
+                    popupContent += '</table>';
+                    layer.bindPopup(popupContent, { maxHeight: 400 });
+                }
+            }).addTo(mapAlbi);
+            mapAlbi.fitBounds(icuAlbiLayer.getBounds());
+        }
+
+        // Légende pour Albi
+        const legendAlbi = L.control({ position: 'bottomright' });
+        legendAlbi.onAdd = function(map) {
+            const div = L.DomUtil.create('div');
+            div.style.background = 'white';
+            div.style.padding = '15px';
+            div.style.border = '1px solid #ddd';
+            div.style.borderRadius = '5px';
+            
+            div.innerHTML = '<h4 style="margin:0 0 10px 0; font-size:0.95em; font-weight:600;">ICU Prédite (°C)</h4>';
+            
+            const categories = [
+            { label: '6.18 - 7.26 (Très élevé)', color: 'rgba(215,25,28,1.0)' },
+            { label: '5.4 - 6.18 (Élevé)', color: 'rgba(253,174,97,1.0)' },
+            { label: '4.01 - 5.4 (Moyen)', color: 'rgba(255,255,191,1.0)' },
+            { label: '2.49 - 4.01 (Faible)', color: 'rgba(171,221,164,1.0)' },
+            { label: '0.60 - 2.49 (Très faible)', color: 'rgba(43,131,186,1.0)' }
+        ];
+            
+            categories.forEach(cat => {
+                div.innerHTML += 
+                    '<div style="display:flex; align-items:center; margin:5px 0; font-size:0.9em;">' +
+                    '<div style="width:30px; height:20px; background:' + cat.color + '; margin-right:10px; border:1px solid #232323;"></div>' +
+                    '<span>' + cat.label + '</span>' +
+                    '</div>';
+            });
+            
+            return div;
+        };
+        legendAlbi.addTo(mapAlbi);
+        
+
+        // ==================== CARTE PUYLAURENS (ICU) ====================
         const mapCommune3 = L.map('map-commune3', {
             zoomControl: true,
             maxZoom: 28,
             minZoom: 1,
-            scrollWheelZoom: false,
+            scrollWheelZoom: true,
             dragging: true,
             touchZoom: true,
             doubleClickZoom: true,
             boxZoom: true,
             keyboard: true
-        }).setView([43.5697, 1.9823], 13); // Coordonnées de Puylaurens, zoom 13
+        }).setView([43.5697, 1.9823], 13);
 
-        // Ajouter le fond de carte OSM
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
             maxZoom: 18,
             minZoom: 10
         }).addTo(mapCommune3);
 
-        // Ajouter un marqueur pour indiquer le centre de Puylaurens, temporaire en attendant les données précises
-        L.marker([43.5697, 1.9823], {
-            title: 'Centre de Puylaurens',
-            alt: 'Centre de Puylaurens',
-            riseOnHover: true
-        }).addTo(mapCommune3)
-          .bindPopup('<b>Puylaurens</b><br>Commune du Tarn<br>Population : ~4 500 hab.')
-          .openPopup();
+        // Fonction de style pour ICU Puylaurens
+       function styleICUPuylaurens(feature) {
+    const icuPredite = feature.properties['ICU_predite'];
+            const baseStyle = {
+                pane: 'pane_icu_puylaurens',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                interactive: true
+            };
+            
+            if (icuPredite === undefined || icuPredite === null || isNaN(parseFloat(icuPredite))) {
+                return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+            }
+            
+            const valeur = parseFloat(icuPredite);
+            
+            if (valeur >= 0.60 && valeur < 2.49) return { ...baseStyle, fillColor: 'rgba(43,131,186,1.0)' };
+            if (valeur >= 2.49 && valeur < 4.01) return { ...baseStyle, fillColor: 'rgba(171,221,164,1.0)' };
+            if (valeur >= 4.01 && valeur < 5.4) return { ...baseStyle, fillColor: 'rgba(255,255,191,1.0)' };
+            if (valeur >= 5.4 && valeur < 6.18) return { ...baseStyle, fillColor: 'rgba(253,174,97,1.0)' };
+            if (valeur >= 6.18) return { ...baseStyle, fillColor: 'rgba(215,25,28,1.0)' };
+        }
 
-        console.log("✓ Cartes de focus sur trois communes initialisées avec fond OSM");
+        mapCommune3.createPane('pane_icu_puylaurens');
+        mapCommune3.getPane('pane_icu_puylaurens').style.zIndex = 400;
+
+        if (typeof json_ICU_MODELISE_puylaurensICU_modelise_0 !== 'undefined') {
+            const icuPuylaurensLayer = L.geoJson(json_ICU_MODELISE_puylaurensICU_modelise_0, {
+                style: styleICUPuylaurens,
+                onEachFeature: function(feature, layer) {
+                    let popupContent = '<table style="width:100%; border-collapse: collapse;">';
+                    popupContent += '<tr><td colspan="2" style="font-weight:bold; font-size:1.1em; padding:5px; background:#2c3e50; color:white;">ICU Puylaurens</td></tr>';
+                    
+                    if (feature.properties['ICU_predite'] !== undefined) {
+                        popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>ICU prédite (température ressentie supplémentaire par rapport à la normal)</strong></td><td style="padding:5px;">' + 
+                                        feature.properties['ICU_predite'].toFixed(2) + '°C</td></tr>';
+                    }
+                    if (feature.properties['ICU_pred_classe']) {
+                        popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>Classe ICU</strong></td><td style="padding:5px;">' + 
+                                        feature.properties['ICU_pred_classe'] + '</td></tr>';
+                    }
+                    if (feature.properties['pop'] !== undefined) {
+                        popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>Population</strong></td><td style="padding:5px;">' + 
+                                        Math.round(feature.properties['pop']) + ' hab.</td></tr>';
+                    }
+                    
+                    popupContent += '</table>';
+                    layer.bindPopup(popupContent, { maxHeight: 400 });
+                }
+            }).addTo(mapCommune3);
+            mapCommune3.fitBounds(icuPuylaurensLayer.getBounds());
+        }
+
+        // Légende pour Puylaurens
+        const legendPuylaurens = L.control({ position: 'bottomright' });
+        legendPuylaurens.onAdd = function(map) {
+            const div = L.DomUtil.create('div');
+            div.style.background = 'white';
+            div.style.padding = '15px';
+            div.style.border = '1px solid #ddd';
+            div.style.borderRadius = '5px';
+            
+            div.innerHTML = '<h4 style="margin:0 0 10px 0; font-size:0.95em; font-weight:600;">ICU Prédite (°C)</h4>';
+            
+            const categories = [
+            { label: '6.18 - 7.26 (Très élevé)', color: 'rgba(215,25,28,1.0)' },
+            { label: '5.4 - 6.18 (Élevé)', color: 'rgba(253,174,97,1.0)' },
+            { label: '4.01 - 5.4 (Moyen)', color: 'rgba(255,255,191,1.0)' },
+            { label: '2.49 - 4.01 (Faible)', color: 'rgba(171,221,164,1.0)' },
+            { label: '0.60 - 2.49 (Très faible)', color: 'rgba(43,131,186,1.0)' }
+        ];
+            
+            categories.forEach(cat => {
+                div.innerHTML += 
+                    '<div style="display:flex; align-items:center; margin:5px 0; font-size:0.9em;">' +
+                    '<div style="width:30px; height:20px; background:' + cat.color + '; margin-right:10px; border:1px solid #232323;"></div>' +
+                    '<span>' + cat.label + '</span>' +
+                    '</div>';
+            });
+            
+            return div;
+        };
+        legendPuylaurens.addTo(mapCommune3);
 
         // ==================== CARTE 5 : VULNÉRABILITÉ ====================
 
@@ -1538,7 +1783,7 @@
             popupContent += '<tr><td colspan="2" style="font-weight:bold; font-size:1.1em; padding:5px; background:#2c3e50; color:white;">Informations</td></tr>';
             
             if (feature.properties['ICU_predite'] !== undefined) {
-                popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>ICU prédite</strong></td><td style="padding:5px;">' + 
+                popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>ICU prédite (température ressentie supplémentaire par rapport à la normal)</strong></td><td style="padding:5px;">' + 
                                 feature.properties['ICU_predite'].toFixed(2) + '°C</td></tr>';
             }
             if (feature.properties['ICU_classe_calc']) {
@@ -2055,6 +2300,282 @@
             console.log("✓ Couche vulnérabilité Puylaurens créée");
         }
 
+        // ===== CRÉER LES COUCHES ICU =====
+        let icuCastresLayerInteractive = null;
+        let icuAlbiLayerInteractive = null;
+        let icuPuylaurensLayerInteractive = null;
+
+        if (typeof json_ICU_MODELISE_castresICU_modelise_0 !== 'undefined') {
+            console.log("✓ Données ICU Castres disponibles");
+            icuCastresLayerInteractive = L.geoJson(json_ICU_MODELISE_castresICU_modelise_0, {
+                style: styleICUCastresInteractive,
+                onEachFeature: function(feature, layer) {
+                    layer.bindPopup(createICUPopup(feature), { maxHeight: 400 });
+                }
+            });
+            console.log("✓ Couche ICU Castres créée");
+        }
+
+        if (typeof json_ICU_MODELISE_albiICU_modelise_0 !== 'undefined') {
+            console.log("✓ Données ICU Albi disponibles");
+            icuAlbiLayerInteractive = L.geoJson(json_ICU_MODELISE_albiICU_modelise_0, {
+                style: styleICUAlbiInteractive,
+                onEachFeature: function(feature, layer) {
+                    layer.bindPopup(createICUPopup(feature), { maxHeight: 400 });
+                }
+            });
+            console.log("✓ Couche ICU Albi créée");
+        }
+
+        if (typeof json_ICU_MODELISE_puylaurensICU_modelise_0 !== 'undefined') {
+            console.log("✓ Données ICU Puylaurens disponibles");
+            icuPuylaurensLayerInteractive = L.geoJson(json_ICU_MODELISE_puylaurensICU_modelise_0, {
+                style: styleICUPuylaurensInteractive,
+                onEachFeature: function(feature, layer) {
+                    layer.bindPopup(createICUPopup(feature), { maxHeight: 400 });
+                }
+            });
+            console.log("✓ Couche ICU Puylaurens créée");
+        }
+
+        // ===== FONCTIONS DE STYLE ICU POUR CARTE INTERACTIVE =====
+        function styleICUCastresInteractive(feature) {
+            const icuPredite = feature.properties['ICU_predite'];
+            const baseStyle = {
+                pane: 'pane_icu_castres_interactive',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                interactive: true
+            };
+            
+            if (icuPredite === undefined || icuPredite === null || isNaN(parseFloat(icuPredite))) {
+                return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+            }
+            
+            const valeur = parseFloat(icuPredite);
+            
+            if (valeur >= 0.60 && valeur < 2.49) return { ...baseStyle, fillColor: 'rgba(43,131,186,1.0)' };
+            if (valeur >= 2.49 && valeur < 4.01) return { ...baseStyle, fillColor: 'rgba(171,221,164,1.0)' };
+            if (valeur >= 4.01 && valeur < 5.4) return { ...baseStyle, fillColor: 'rgba(255,255,191,1.0)' };
+            if (valeur >= 5.4 && valeur < 6.18) return { ...baseStyle, fillColor: 'rgba(253,174,97,1.0)' };
+            if (valeur >= 6.18) return { ...baseStyle, fillColor: 'rgba(215,25,28,1.0)' };
+            
+            return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+        }
+
+        function styleICUAlbiInteractive(feature) {
+            const icuPredite = feature.properties['ICU_predite'];
+            const baseStyle = {
+                pane: 'pane_icu_albi_interactive',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                interactive: true
+            };
+            
+            if (icuPredite === undefined || icuPredite === null || isNaN(parseFloat(icuPredite))) {
+                return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+            }
+            
+            const valeur = parseFloat(icuPredite);
+            
+            if (valeur >= 0.60 && valeur < 2.49) return { ...baseStyle, fillColor: 'rgba(43,131,186,1.0)' };
+            if (valeur >= 2.49 && valeur < 4.01) return { ...baseStyle, fillColor: 'rgba(171,221,164,1.0)' };
+            if (valeur >= 4.01 && valeur < 5.4) return { ...baseStyle, fillColor: 'rgba(255,255,191,1.0)' };
+            if (valeur >= 5.4 && valeur < 6.18) return { ...baseStyle, fillColor: 'rgba(253,174,97,1.0)' };
+            if (valeur >= 6.18) return { ...baseStyle, fillColor: 'rgba(215,25,28,1.0)' };
+            
+            return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+        }
+
+        function styleICUPuylaurensInteractive(feature) {
+            const icuPredite = feature.properties['ICU_predite'];
+            const baseStyle = {
+                pane: 'pane_icu_puylaurens_interactive',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                interactive: true
+            };
+            
+            if (icuPredite === undefined || icuPredite === null || isNaN(parseFloat(icuPredite))) {
+                return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+            }
+            
+            const valeur = parseFloat(icuPredite);
+            
+            if (valeur >= 0.60 && valeur < 2.49) return { ...baseStyle, fillColor: 'rgba(43,131,186,1.0)' };
+            if (valeur >= 2.49 && valeur < 4.01) return { ...baseStyle, fillColor: 'rgba(171,221,164,1.0)' };
+            if (valeur >= 4.01 && valeur < 5.4) return { ...baseStyle, fillColor: 'rgba(255,255,191,1.0)' };
+            if (valeur >= 5.4 && valeur < 6.18) return { ...baseStyle, fillColor: 'rgba(253,174,97,1.0)' };
+            if (valeur >= 6.18) return { ...baseStyle, fillColor: 'rgba(215,25,28,1.0)' };
+            
+            return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+        }
+
+        // Fonction popup pour ICU
+        function createICUPopup(feature) {
+            let popupContent = '<table style="width:100%; border-collapse: collapse;">';
+            popupContent += '<tr><td colspan="2" style="font-weight:bold; font-size:1.1em; padding:5px; background:#2c3e50; color:white;">ICU</td></tr>';
+            
+            if (feature.properties['ICU_predite'] !== undefined) {
+                popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>ICU prédite (température ressentie supplémentaire par rapport à la normal)</strong></td><td style="padding:5px;">' + 
+                                feature.properties['ICU_predite'].toFixed(2) + '°C</td></tr>';
+            }
+            if (feature.properties['ICU_pred_classe']) {
+                popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>Classe ICU</strong></td><td style="padding:5px;">' + 
+                                feature.properties['ICU_pred_classe'] + '</td></tr>';
+            }
+            if (feature.properties['pop'] !== undefined) {
+                popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>Population</strong></td><td style="padding:5px;">' + 
+                                Math.round(feature.properties['pop']) + ' hab.</td></tr>';
+            }
+            
+            popupContent += '</table>';
+            return popupContent;
+        }
+
+        // ===== FONCTIONS DE STYLE ICU POUR CARTE INTERACTIVE =====
+        function styleICUCastresInteractive(feature) {
+            const icuPredite = feature.properties['ICU_predite'];
+            const baseStyle = {
+                pane: 'pane_icu_castres_interactive',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                interactive: true
+            };
+            
+            if (icuPredite === undefined || icuPredite === null || isNaN(parseFloat(icuPredite))) {
+                return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+            }
+            
+            const valeur = parseFloat(icuPredite);
+            
+            if (valeur >= 0.60 && valeur < 2.49) return { ...baseStyle, fillColor: 'rgba(43,131,186,1.0)' };
+            if (valeur >= 2.49 && valeur < 4.01) return { ...baseStyle, fillColor: 'rgba(171,221,164,1.0)' };
+            if (valeur >= 4.01 && valeur < 5.4) return { ...baseStyle, fillColor: 'rgba(255,255,191,1.0)' };
+            if (valeur >= 5.4 && valeur < 6.18) return { ...baseStyle, fillColor: 'rgba(253,174,97,1.0)' };
+            if (valeur >= 6.18) return { ...baseStyle, fillColor: 'rgba(215,25,28,1.0)' };
+            
+            return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+        }
+
+        function styleICUAlbiInteractive(feature) {
+            const icuPredite = feature.properties['ICU_predite'];
+            const baseStyle = {
+                pane: 'pane_icu_albi_interactive',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                interactive: true
+            };
+            
+            if (icuPredite === undefined || icuPredite === null || isNaN(parseFloat(icuPredite))) {
+                return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+            }
+            
+            const valeur = parseFloat(icuPredite);
+            
+            if (valeur >= 0.60 && valeur < 2.49) return { ...baseStyle, fillColor: 'rgba(43,131,186,1.0)' };
+            if (valeur >= 2.49 && valeur < 4.01) return { ...baseStyle, fillColor: 'rgba(171,221,164,1.0)' };
+            if (valeur >= 4.01 && valeur < 5.4) return { ...baseStyle, fillColor: 'rgba(255,255,191,1.0)' };
+            if (valeur >= 5.4 && valeur < 6.18) return { ...baseStyle, fillColor: 'rgba(253,174,97,1.0)' };
+            if (valeur >= 6.18) return { ...baseStyle, fillColor: 'rgba(215,25,28,1.0)' };
+            
+            return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+        }
+
+        function styleICUPuylaurensInteractive(feature) {
+            const icuPredite = feature.properties['ICU_predite'];
+            const baseStyle = {
+                pane: 'pane_icu_puylaurens_interactive',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                interactive: true
+            };
+            
+            if (icuPredite === undefined || icuPredite === null || isNaN(parseFloat(icuPredite))) {
+                return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+            }
+            
+            const valeur = parseFloat(icuPredite);
+            
+            if (valeur >= 0.60 && valeur < 2.49) return { ...baseStyle, fillColor: 'rgba(43,131,186,1.0)' };
+            if (valeur >= 2.49 && valeur < 4.01) return { ...baseStyle, fillColor: 'rgba(171,221,164,1.0)' };
+            if (valeur >= 4.01 && valeur < 5.4) return { ...baseStyle, fillColor: 'rgba(255,255,191,1.0)' };
+            if (valeur >= 5.4 && valeur < 6.18) return { ...baseStyle, fillColor: 'rgba(253,174,97,1.0)' };
+            if (valeur >= 6.18) return { ...baseStyle, fillColor: 'rgba(215,25,28,1.0)' };
+            
+            return { ...baseStyle, fillColor: 'rgba(220,220,220,1.0)' };
+        }
+
+        // Fonction popup pour ICU
+        function createICUPopup(feature) {
+            let popupContent = '<table style="width:100%; border-collapse: collapse;">';
+            popupContent += '<tr><td colspan="2" style="font-weight:bold; font-size:1.1em; padding:5px; background:#2c3e50; color:white;">ICU</td></tr>';
+            
+            if (feature.properties['ICU_predite'] !== undefined) {
+                popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>ICU prédite (température ressentie supplémentaire par rapport à la normal)</strong></td><td style="padding:5px;">' + 
+                                feature.properties['ICU_predite'].toFixed(2) + '°C</td></tr>';
+            }
+            if (feature.properties['ICU_pred_classe']) {
+                popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>Classe ICU</strong></td><td style="padding:5px;">' + 
+                                feature.properties['ICU_pred_classe'] + '</td></tr>';
+            }
+            if (feature.properties['pop'] !== undefined) {
+                popupContent += '<tr><td style="padding:5px; background:#f8f9fa;"><strong>Population</strong></td><td style="padding:5px;">' + 
+                                Math.round(feature.properties['pop']) + ' hab.</td></tr>';
+            }
+            
+            popupContent += '</table>';
+            return popupContent;
+        }
+
+        // ===== COUCHES ICU (ÎLOTS DE CHALEUR) =====
+        console.log("Chargement des couches ICU...");
+
+        mapInteractive.createPane('pane_icu_castres_interactive');
+        mapInteractive.getPane('pane_icu_castres_interactive').style.zIndex = 407;
+
+        mapInteractive.createPane('pane_icu_albi_interactive');
+        mapInteractive.getPane('pane_icu_albi_interactive').style.zIndex = 408;
+
+        mapInteractive.createPane('pane_icu_puylaurens_interactive');
+        mapInteractive.getPane('pane_icu_puylaurens_interactive').style.zIndex = 409;
+
         // ===== CONTRÔLE DES COUCHES PERSONNALISÉ AVEC ACCORDÉON =====
         console.log("Création du contrôle des couches avec accordéon...");
 
@@ -2144,6 +2665,27 @@
                     html += '<div class="layer-item">';
                     html += '<input type="checkbox" id="layer-vuln-puylaurens" onchange="toggleLayer(\'vuln-puylaurens\')">';
                     html += '<label for="layer-vuln-puylaurens">Vulnérabilité Puylaurens</label>';
+                    html += '</div>';
+                }
+
+                if (icuCastresLayerInteractive) {
+                    html += '<div class="layer-item">';
+                    html += '<input type="checkbox" id="layer-icu-castres" onchange="toggleLayer(\'icu-castres\')">';
+                    html += '<label for="layer-icu-castres">ICU Castres</label>';
+                    html += '</div>';
+                }
+
+                if (icuAlbiLayerInteractive) {
+                    html += '<div class="layer-item">';
+                    html += '<input type="checkbox" id="layer-icu-albi" onchange="toggleLayer(\'icu-albi\')">';
+                    html += '<label for="layer-icu-albi">ICU Albi</label>';
+                    html += '</div>';
+                }
+
+                if (icuPuylaurensLayerInteractive) {
+                    html += '<div class="layer-item">';
+                    html += '<input type="checkbox" id="layer-icu-puylaurens" onchange="toggleLayer(\'icu-puylaurens\')">';
+                    html += '<label for="layer-icu-puylaurens">ICU Puylaurens</label>';
                     html += '</div>';
                 }
                 
@@ -2308,10 +2850,25 @@
                     name: 'vuln-castres',
                     styleFunc: styleVulnerabiliteInteractive('pane_vuln_castres_interactive')
                 },
-                { 
+                {   
                     layer: vulnPuylaurensLayerInteractive, 
                     name: 'vuln-puylaurens',
                     styleFunc: styleVulnerabiliteInteractive('pane_vuln_puylaurens_interactive')
+                },
+                { 
+                    layer: icuCastresLayerInteractive, 
+                    name: 'icu-castres',
+                    styleFunc: styleICUCastresInteractive
+                },
+                { 
+                    layer: icuAlbiLayerInteractive, 
+                    name: 'icu-albi',
+                    styleFunc: styleICUAlbiInteractive
+                },
+                { 
+                    layer: icuPuylaurensLayerInteractive, 
+                    name: 'icu-puylaurens',
+                    styleFunc: styleICUPuylaurensInteractive
                 }
             ];
             
@@ -2476,7 +3033,82 @@
                         }
                     }
                     break;
+                
+                case 'icu-castres':
+                if (icuCastresLayerInteractive) {
+                    if (isChecked) {
+                        mapInteractive.addLayer(icuCastresLayerInteractive);
+                        icuCastresLayerInteractive.eachLayer(function(layer) {
+                            layer.setStyle(styleICUCastresInteractive(layer.feature));
+                        });
+                    } else {
+                        mapInteractive.removeLayer(icuCastresLayerInteractive);
+                    }
+                }
+                break;
+            case 'icu-albi':
+                if (icuAlbiLayerInteractive) {
+                    if (isChecked) {
+                        mapInteractive.addLayer(icuAlbiLayerInteractive);
+                        icuAlbiLayerInteractive.eachLayer(function(layer) {
+                            layer.setStyle(styleICUAlbiInteractive(layer.feature));
+                        });
+                    } else {
+                        mapInteractive.removeLayer(icuAlbiLayerInteractive);
+                    }
+                }
+                break;
+            case 'icu-puylaurens':
+                if (icuPuylaurensLayerInteractive) {
+                    if (isChecked) {
+                        mapInteractive.addLayer(icuPuylaurensLayerInteractive);
+                        icuPuylaurensLayerInteractive.eachLayer(function(layer) {
+                            layer.setStyle(styleICUPuylaurensInteractive(layer.feature));
+                        });
+                    } else {
+                        mapInteractive.removeLayer(icuPuylaurensLayerInteractive);
+                    }
+                }
+                break;
+            case 'icu-castres':
+                if (icuCastresLayerInteractive) {
+                    if (isChecked) {
+                        mapInteractive.addLayer(icuCastresLayerInteractive);
+                        icuCastresLayerInteractive.eachLayer(function(layer) {
+                            layer.setStyle(styleICUCastresInteractive(layer.feature));
+                        });
+                    } else {
+                        mapInteractive.removeLayer(icuCastresLayerInteractive);
+                    }
+                }
+                break;
+            case 'icu-albi':
+                if (icuAlbiLayerInteractive) {
+                    if (isChecked) {
+                        mapInteractive.addLayer(icuAlbiLayerInteractive);
+                        icuAlbiLayerInteractive.eachLayer(function(layer) {
+                            layer.setStyle(styleICUAlbiInteractive(layer.feature));
+                        });
+                    } else {
+                        mapInteractive.removeLayer(icuAlbiLayerInteractive);
+                    }
+                }
+                break;
+            case 'icu-puylaurens':
+                if (icuPuylaurensLayerInteractive) {
+                    if (isChecked) {
+                        mapInteractive.addLayer(icuPuylaurensLayerInteractive);
+                        icuPuylaurensLayerInteractive.eachLayer(function(layer) {
+                            layer.setStyle(styleICUPuylaurensInteractive(layer.feature));
+                        });
+                    } else {
+                        mapInteractive.removeLayer(icuPuylaurensLayerInteractive);
+                    }
+                }
+                break;
+            
             }
+
             
             // Appliquer le filtre si une commune est sélectionnée
             applyFilterToAllLayers();
@@ -2565,6 +3197,26 @@
                 html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,165,0,0.7); margin-right:8px; border:1px solid #232323;"></div><span style="font-size:0.8em;">2.0 - 2.5 (Élevé)</span></div>';
                 html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,255,0,0.7); margin-right:8px; border:1px solid #232323;"></div><span style="font-size:0.8em;">1.5 - 2.0 (Moyen)</span></div>';
                 html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(144,238,144,0.7); margin-right:8px; border:1px solid #232323;"></div><span style="font-size:0.8em;">1.0 - 1.5 (Faible)</span></div>';
+                html += '</div>';
+            }
+
+            const icuLayers = [
+                { layer: icuCastresLayerInteractive, name: 'Castres' },
+                { layer: icuAlbiLayerInteractive, name: 'Albi' },
+                { layer: icuPuylaurensLayerInteractive, name: 'Puylaurens' }
+            ];
+
+            const activeICU = icuLayers.find(i => i.layer && mapInteractive.hasLayer(i.layer));
+
+            if (activeICU) {
+                hasLayers = true;
+                html += '<div style="margin-bottom:12px;">';
+                html += '<strong style="color:#2c3e50; display:block; margin-bottom:5px; font-size:0.9em;">ICU ' + activeICU.name + '</strong>';
+                html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(215,25,28,1.0); margin-right:8px; border:1px solid #232323;"></div><span style="font-size:0.8em;">6.18 - 7.26 (Très élevé)</span></div>';
+                html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(253,174,97,1.0); margin-right:8px; border:1px solid #232323;"></div><span style="font-size:0.8em;">5.4 - 6.18 (Élevé)</span></div>';
+                html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(255,255,191,1.0); margin-right:8px; border:1px solid #232323;"></div><span style="font-size:0.8em;">4.01 - 5.4 (Moyen)</span></div>';
+                html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(171,221,164,1.0); margin-right:8px; border:1px solid #232323;"></div><span style="font-size:0.8em;">2.49 - 4.01 (Faible)</span></div>';
+                html += '<div style="display:flex; align-items:center; margin:3px 0;"><div style="width:25px; height:15px; background:rgba(43,131,186,1.0); margin-right:8px; border:1px solid #232323;"></div><span style="font-size:0.8em;">0.60 - 2.49 (Très faible)</span></div>';
                 html += '</div>';
             }
 
